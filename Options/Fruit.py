@@ -2,18 +2,24 @@ from tkinter import *
 from random import *
 from tkinter import messagebox
 import time
+from csv import *
 
-FRUITS_WORD = ['EALPP', 'VAAGU', 'PEHCA', 'PRAE', 'NGMAO', 'PAAPYA', 'EGNRAO', 'AGESPR', 'WIKI', 'RRYCHE', 'LRTOANWEME',
-               'PEELIPNPA', 'BELUEBRRY', 'NABAAN', 'NTUOCCO', 'SCURATD EALPP', 'MONLE', 'EREYBMUL', 'MARTAIND']
+ผลไม้_WORD = ['เปปอิลแ', 'มมว่งะ', 'ะกลมอะ', 'ชรรอ์เ', 'ตมงแโ',
+               'ดัสปประ', 'บี่บรูรลอ์เ', 'ม้วพราะ' ]
 
-FRUITS_ANSWER = ['APPLE', 'GUAVA', 'PEACH', 'PEAR', 'MANGO', 'PAPAYA', 'ORANGE', 'GRAPES', 'KIWI', 'CHERRY',
-                 'WATERMELON', 'PINEAPPLE', 'BLUEBERRY', 'BANANA', 'COCONUT', 'CUSTARD APPLE', 'LEMON', 'MULBERRY',
-                 'TAMARIND']
+ผลไม้_ANSWER = ['แอปเปิ้ล', 'มะม่วง', 'มะละกอ', 'เชอร์รี่','แตงโม',
+                'สัปปะรด', 'บลูเบอร์รี่', 'มะพร้าว' ]
 
-ran_num = randrange(0, (len(FRUITS_WORD)))
-jumbled_rand_word = FRUITS_WORD[ran_num]
-
-points = 0
+ran_num = randrange(0, (len(ผลไม้_WORD)))
+jumbled_rand_word = ผลไม้_WORD[ran_num]
+try:
+    score=[]
+    with open("score.csv",'r')as f:
+        for i in f:
+            score.append(int(i))
+    points = score[0]
+except:
+    points = 0
 
 
 def main():
@@ -24,20 +30,22 @@ def main():
 
     def change():
         global ran_num
-        ran_num = randrange(0, (len(FRUITS_WORD)))
-        word.configure(text=FRUITS_WORD[ran_num])
+        ran_num = randrange(0, (len(ผลไม้_WORD)))
+        word.configure(text=ผลไม้_WORD[ran_num])
         get_input.delete(0, END)
         ans_lab.configure(text="")
-
+    def save():
+        with open("score.csv","w")as f:
+                f.write(str(points) +'\n')
     def cheak():
         global points, ran_num
         user_word = get_input.get().upper()
-        if user_word == FRUITS_ANSWER[ran_num]:
+        if user_word == ผลไม้_ANSWER[ran_num]:
             points += 5
             score.configure(text="Score: " + str(points))
             messagebox.showinfo('correct', "Correct Answer.. Keep it Up!")
-            ran_num = randrange(0, (len(FRUITS_WORD)))
-            word.configure(text=FRUITS_WORD[ran_num])
+            ran_num = randrange(0, (len(ผลไม้_WORD)))
+            word.configure(text=ผลไม้_WORD[ran_num])
             get_input.delete(0, END)
             ans_lab.configure(text="")
         else:
@@ -50,14 +58,14 @@ def main():
             points -= 5
             score.configure(text="Score: " + str(points))
             time.sleep(0.5)
-            ans_lab.configure(text=FRUITS_ANSWER[ran_num])
+            ans_lab.configure(text=ผลไม้_ANSWER[ran_num])
         else:
             ans_lab.configure(text='Not enough points')
 
     my_window = Tk()
     my_window.geometry("500x500+500+150")
     my_window.resizable(0, 0)
-    my_window.title("Guess the Word Game")
+    my_window.title("เกมทายคำศัพท์สุดแปลก")
     my_window.configure(background="#e6fff5")
     img1 = PhotoImage(file="back.png")
 
@@ -72,7 +80,7 @@ def main():
     lab_img1.pack(anchor='nw', pady=10, padx=10)
 
     score = Label(
-        text="Score:- 0",
+        text="Score: ",
         pady=10,
         bg="#e6fff5",
         fg="#000000",
@@ -97,10 +105,10 @@ def main():
     get_input.pack()
 
     submit = Button(
-        text="Submit",
-        width=18,
-        borderwidth=8,
-        font=("", 13),
+        text="ตกลง",
+        width=15,
+        borderwidth=5,
+        font=("", 12),
         fg="#000000",
         bg="#99ffd6",
         command=cheak,
@@ -108,24 +116,34 @@ def main():
     submit.pack(pady=(10,20))
 
     change = Button(
-        text="Change Word",
-        width=18,
-        borderwidth=8,
+        text="ข้าม",
+        width=15,
+        borderwidth=5,
         fg="#000000",
         bg="#99ffd6",
-        font=("", 13),
+        font=("", 12),
         command=change,
     )
     change.pack()
 
     ans = Button(
-        text="Answer",
-        width=18,
-        borderwidth=8,
+        text="เฉลย",
+        width=15,
+        borderwidth=5,
         fg="#000000",
         bg="#99ffd6",
-        font=("", 13),
+        font=("", 12),
         command=show_answer,
+    )
+    ans.pack(pady=(20, 10))
+    ans = Button(
+        text="บันทึก",
+        width=15,
+        borderwidth=5,
+        fg="#000000",
+        bg="#99ffd6",
+        font=("", 12),
+        command=save,
     )
     ans.pack(pady=(20, 10))
 
@@ -136,5 +154,4 @@ def main():
         font="Courier 15 bold",
     )
     ans_lab.pack()
-
     my_window.mainloop()
